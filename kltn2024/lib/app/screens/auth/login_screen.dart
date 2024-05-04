@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../admin/admin_home.dart';
 import '../../services/database.dart';
+import '../../services/shared_prefences.dart';
 import '../../utils/app_widget.dart';
 import '../../widgets/bottomnavbar.dart';
 import 'forgot.dart';
@@ -26,66 +27,70 @@ class _LogInState extends State<LogIn> {
   TextEditingController userpasswordcontroller = TextEditingController();
 
   userLogin() async {
-  try {
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    // Lấy thông tin người dùng hiện tại từ userCredential
-    final User? user = userCredential.user;
+      // Lấy thông tin người dùng hiện tại từ userCredential
+      final User? user = userCredential.user;
 
-    if (user != null) {
-      // Sử dụng email của người dùng để xác định vai trò
-      final String role = await DatabaseMethods().getUserRoleByEmail(email);
+      if (user != null) {
+        await SharedPreferenceHelper().saveUserName(user.displayName);
+        await SharedPreferenceHelper().saveUserEmail(email);
+        await SharedPreferenceHelper().saveUserId(user.uid);
+        // Sử dụng email của người dùng để xác định vai trò
+        final String role = await DatabaseMethods().getUserRoleByEmail(email);
 
-      // Chuyển hướng dựa trên vai trò
-      if (role == "admin") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeAdmin()),
+        // Chuyển hướng dựa trên vai trò
+        if (role == "admin") {
+          SharedPreferenceHelper().saveUserRole('admin');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeAdmin()),
+          );
+        } else {
+          SharedPreferenceHelper().saveUserRole('user');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => BotomNavBar()),
+          );
+        }
+      }
+
+      // Hiển thị SnackBar khi đăng nhập thành công
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Login Successful!",
+            style: TextStyle(fontSize: 18.0, color: Colors.black),
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      // Xử lý lỗi đăng nhập
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "No User Found for that Email",
+              style: TextStyle(fontSize: 18.0, color: Colors.black),
+            ),
+          ),
         );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => BotomNavBar()),
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Wrong Password Provided by User",
+              style: TextStyle(fontSize: 18.0, color: Colors.black),
+            ),
+          ),
         );
       }
     }
-
-    // Hiển thị SnackBar khi đăng nhập thành công
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Login Successful!",
-          style: TextStyle(fontSize: 18.0, color: Colors.black),
-        ),
-      ),
-    );
-  } on FirebaseAuthException catch (e) {
-    // Xử lý lỗi đăng nhập
-    if (e.code == 'user-not-found') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "No User Found for that Email",
-            style: TextStyle(fontSize: 18.0, color: Colors.black),
-          ),
-        ),
-      );
-    } else if (e.code == 'wrong-password') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Wrong Password Provided by User",
-            style: TextStyle(fontSize: 18.0, color: Colors.black),
-          ),
-        ),
-      );
-    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -214,42 +219,39 @@ class _LogInState extends State<LogIn> {
                                 ),
                               ),
                               const SizedBox(height: 20.0),
-                       ElevatedButton(
-  onPressed: () async {
-    if (_formkey.currentState!.validate()) {
-      setState(() {
-        email = useremailcontroller.text;
-        password = userpasswordcontroller.text;
-      });
-      
-  
-    
-        userLogin();
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: const Color(0Xffff5722),
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    fixedSize: const Size(200, 50),
-  ),
-  child: const Text(
-    "LOGIN",
-    style: TextStyle(
-      color: Colors.white,
-      fontSize: 18.0,
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  if (_formkey.currentState!.validate()) {
+                                    setState(() {
+                                      email = useremailcontroller.text;
+                                      password = userpasswordcontroller.text;
+                                    });
 
-
+                                    userLogin();
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0Xffff5722),
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
+                                  fixedSize: const Size(200, 50),
+                                ),
+                                child: const Text(
+                                  "LOGIN",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
-                     ),
+                    ),
                     const SizedBox(height: 20.0),
                     GestureDetector(
                       onTap: () {

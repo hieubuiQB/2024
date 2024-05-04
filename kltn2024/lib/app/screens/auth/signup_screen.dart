@@ -31,7 +31,8 @@ class _SignUpState extends State<SignUp> {
       // ignore: unused_local_variable
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-
+      User? user = userCredential.user;
+      user?.updateDisplayName(namecontroller.text);
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar((const SnackBar(
           backgroundColor: Colors.redAccent,

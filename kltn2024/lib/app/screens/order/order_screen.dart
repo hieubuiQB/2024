@@ -116,7 +116,7 @@ class _OrderState extends State<Order> {
     });
 
     body += '\nTotal: \$${total.toString()}';
-
+    body += '\n\nVui lòng thanh toán để được nhận hàng';
     await sendEmail(email!, subject, body);
 
     await SharedPreferenceHelper().saveUserPurchaseConfirmed(false);

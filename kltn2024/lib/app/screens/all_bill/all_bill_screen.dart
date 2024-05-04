@@ -3,12 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/bil_services.dart';
+import '../../services/shared_prefences.dart';
 import '../../utils/app_widget.dart';
 
-class AllBillsPage extends StatelessWidget {
-  final BillService billService = BillService();
-
+class AllBillsPage extends StatefulWidget {
   AllBillsPage({super.key});
+
+  @override
+  State<AllBillsPage> createState() => _AllBillsPageState();
+}
+
+class _AllBillsPageState extends State<AllBillsPage> {
+  final BillService billService = BillService();
+  String? userId;
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferenceHelper().getUserId().then((value) => setState(() {
+          if (value != null) {
+            userId = value;
+          }
+        }));
+  }
 
   @override
   Widget build(BuildContext context) {

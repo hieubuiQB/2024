@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:food/app/services/database.dart';
+import 'package:food/app/services/shared_prefences.dart';
 
 import '../screens/auth/login_screen.dart';
 
@@ -13,6 +15,10 @@ class AuthMethods {
   // Phương thức đăng xuất người dùng
   Future<void> signOut(BuildContext context) async {
     try {
+
+      await SharedPreferenceHelper().saveUserName(null);
+      await SharedPreferenceHelper().saveUserEmail(null);
+      await SharedPreferenceHelper().saveUserId(null);
       await _auth.signOut();
       // Đăng xuất thành công, chuyển hướng người dùng đến màn hình đăng nhập
       Navigator.pushReplacement(

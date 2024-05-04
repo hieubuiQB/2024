@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:food/app/screens/auth/login_screen.dart';
 
+import '../../../admin/admin_home.dart';
+import '../../services/database.dart';
+import '../../services/shared_prefences.dart';
 import '../../utils/app_widget.dart';
+import '../../widgets/bottomnavbar.dart';
 import '../../widgets/content_model.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,6 +23,29 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     controller = PageController(initialPage: 0);
     super.initState();
+    Future.delayed(Duration(milliseconds: 1000),()async{
+     final _ = await SharedPreferenceHelper().getUserId();
+     if(_ != null){
+       final email = await SharedPreferenceHelper().getUserEmail();
+       if(email != null) {
+         final String role = await DatabaseMethods().getUserRoleByEmail(email);
+
+         // Chuyển hướng dựa trên vai trò
+         if (role == "admin") {
+           Navigator.pushReplacement(
+             context,
+             MaterialPageRoute(builder: (context) => HomeAdmin()),
+           );
+         } else {
+           Navigator.pushReplacement(
+             context,
+             MaterialPageRoute(builder: (context) => BotomNavBar()),
+           );
+         }
+       }
+     }
+    });
+
   }
 
   @override
@@ -30,6 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(children: [
         Expanded(
           child: PageView.builder(

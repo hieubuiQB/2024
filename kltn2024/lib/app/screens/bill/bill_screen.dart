@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../services/bil_services.dart';
 import '../../utils/app_widget.dart';
 import '../../widgets/bottomnavbar.dart';
+import '../bank/bank_screen.dart';
 
 class BillPage extends StatelessWidget {
   final List<Map<String, dynamic>> orderItems;
@@ -76,6 +77,7 @@ class BillPage extends StatelessWidget {
               'Thanh toán: \$${totalPrice.toString()}',
               style: AppWidget.HeadlinextFieldStyle(),
             ),
+            BankScreen(),
             const SizedBox(height: 20),
             Container(
               width: double.infinity,

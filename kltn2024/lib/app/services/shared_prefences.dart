@@ -9,19 +9,32 @@ class SharedPreferenceHelper{
   static String userProfileKey="USERPROFILEKEY";
   static String userPurchaseConfirmedKey="USERPURCHASECONFIRMEDKEY";
 
-  Future<bool> saveUserId(String getUserId) async {
-    SharedPreferences prefs= await SharedPreferences.getInstance();
-    return prefs.setString(userIdKey, getUserId);
+  Future<bool> saveUserId(String? getUserId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(getUserId != null) {
+      return prefs.setString(userIdKey, getUserId);
+    }else{
+      return prefs.remove(userIdKey);
+    }
  }
 
-  Future<bool> saveUserName(String getUserName) async {
+  Future<bool> saveUserName(String? getUserName) async {
     SharedPreferences prefs= await SharedPreferences.getInstance();
-    return prefs.setString(userNameKey, getUserName);
+    if(getUserName != null) {
+      return prefs.setString(userNameKey, getUserName);
+    }else{
+      return prefs.remove(userNameKey);
+    }
+
   }
 
-  Future<bool> saveUserEmail(String getUserEmail) async {
+  Future<bool> saveUserEmail(String? getUserEmail) async {
     SharedPreferences prefs= await SharedPreferences.getInstance();
-    return prefs.setString(userEmailKey, getUserEmail);
+    if(getUserEmail != null) {
+      return prefs.setString(userEmailKey, getUserEmail);
+    }else{
+      return prefs.remove(userEmailKey);
+    }
   }
 
   Future<bool> saveUserRole(String getUserRole) async {

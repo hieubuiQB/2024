@@ -64,7 +64,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: name == null
+      body: email == null
           ? const CircularProgressIndicator()
           : Container(
               child: Column(
@@ -126,7 +126,7 @@ class _ProfileState extends State<Profile> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              name!,
+                              name ?? 'Chưa có tên',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 23.0,
@@ -174,7 +174,7 @@ class _ProfileState extends State<Profile> {
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  name!,
+                                  name ?? 'Chưa có tên',
                                   style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16.0,
