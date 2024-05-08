@@ -127,6 +127,7 @@ class BillPage extends StatelessWidget {
           duration: Duration(seconds:1),
         ),
       );
+      Navigator.pop(context);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

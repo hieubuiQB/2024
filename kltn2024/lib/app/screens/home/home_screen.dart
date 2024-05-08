@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return snapshot.hasData
             ? ListView.builder(
             padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: snapshot.data.docs.length,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
